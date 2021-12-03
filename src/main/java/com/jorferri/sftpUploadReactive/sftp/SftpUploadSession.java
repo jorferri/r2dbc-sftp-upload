@@ -20,12 +20,15 @@ public class SftpUploadSession {
     @NonNull
     @Getter
     String file;
+
     @NonNull
     String host;
-    @NonNull
+
     int port;
+
     @NonNull
     String username;
+
     @NonNull
     String password;
 
