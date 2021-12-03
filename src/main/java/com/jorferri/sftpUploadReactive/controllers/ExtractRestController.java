@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.time.LocalDate;
 import java.util.Map;
@@ -44,10 +46,11 @@ public class ExtractRestController {
 
         Flux<String> stringFlux = flux
                 .map(Object::toString)
+                .startWith("HEADER")
                 .doOnNext(s -> log.info("Row->" + s))
 //                .subscribeOn(Schedulers.newParallel("file-copy", numTargets))
 //                .publishOn(Schedulers.newParallel("file-copy", numTargets))
-                .log()
+//                .log()
                 .share();
 
         // output file
@@ -76,20 +79,20 @@ public class ExtractRestController {
                 )
                 .map(
                         sftpUploadSession ->
-                                Flux.just(sftpUploadSession)
+                                Mono.just(sftpUploadSession)
                                         .map(SftpUploadSession::init)
                                         .map(upload -> stringFlux
-                                                .map(sftpUploadSession::write)
-                                                .subscribe(s -> {
-                                                        },
-                                                        (e) -> sftpUploadSession.close(),  // close file if error / oncomplete
-                                                        sftpUploadSession::close))
+                                                .map(upload::write)
+                                                .subscribe(s -> log.info("File " + upload.getFile() + " uploaded successfully"),
+                                                        (e) -> upload.close(),  // close file if error / oncomplete
+                                                        upload::close))
                                         .retry(3)
                                         .doOnError(throwable -> log.error("File couldn't be uploaded:" + sftpUploadSession.getFile(), throwable))
+                                        .subscribeOn(Schedulers.boundedElastic())
                                         .subscribe()
 
                 )
-                .log()
+//                .log()
                 .subscribe()
         ;
 
