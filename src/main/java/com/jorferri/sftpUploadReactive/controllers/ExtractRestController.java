@@ -42,13 +42,11 @@ public class ExtractRestController {
 
         Flux<Map<String, Object>> flux = extractService.runExtract();
 
-        int numTargets = 3;
-
         Flux<String> stringFlux = flux
                 .map(Object::toString)
                 .startWith("HEADER")
                 .doOnNext(s -> log.info("Row->" + s))
-//                .subscribeOn(Schedulers.newParallel("file-copy", numTargets))
+//                .subscribeOn(Schedulers.newParallel("file-copy", 3))
 //                .publishOn(Schedulers.newParallel("file-copy", numTargets))
 //                .log()
                 .share();
@@ -88,7 +86,7 @@ public class ExtractRestController {
                                                         upload::close))
                                         .retry(3)
                                         .doOnError(throwable -> log.error("File couldn't be uploaded:" + sftpUploadSession.getFile(), throwable))
-                                        .subscribeOn(Schedulers.boundedElastic())
+                                        .subscribeOn(Schedulers.boundedElastic()) //to avoid blocking
                                         .subscribe()
 
                 )
