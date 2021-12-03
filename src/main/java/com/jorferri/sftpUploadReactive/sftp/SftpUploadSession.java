@@ -24,7 +24,8 @@ public class SftpUploadSession {
     @NonNull
     String host;
 
-    int port;
+    @NonNull
+    Integer port;
 
     @NonNull
     String username;
