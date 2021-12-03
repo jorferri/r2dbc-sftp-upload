@@ -1,0 +1,13 @@
+server:
+  port: 8666
+
+spring:
+  r2dbc:
+    url: r2dbc:oracle://192.168.49.2:31521/ORCLCDB
+    username: OT
+    password: password
+
+logging:
+  level:
+    org.springframework.transaction: TRACE
+    org.springframework.data.r2dbc: DEBUG
