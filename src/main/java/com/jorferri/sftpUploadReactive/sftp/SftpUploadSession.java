@@ -72,6 +72,6 @@ public class SftpUploadSession {
             sftpChannel.exit();
         if (session.isConnected())
             session.disconnect();
-        log.info("Closed " + file + " via " + Thread.currentThread().getName());
+        log.info("File " + file + " uploaded and connection closed via " + Thread.currentThread().getName());
     }
 }

@@ -21,7 +21,7 @@ public class SftpService {
                                         .map(SftpUploadSession::init)
                                         .map(upload -> stringFlux
                                                 .map(upload::write)
-                                                .subscribe(s -> log.info("File " + upload.getFile() + " uploaded successfully"),
+                                                .subscribe(s -> {},
                                                         (e) -> upload.close(),  // close file if error / oncomplete
                                                         upload::close))
                                         .retryWhen(Retry.backoff(3, Duration.ofSeconds(10)).jitter(0.75))
