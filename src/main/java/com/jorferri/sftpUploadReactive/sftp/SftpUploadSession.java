@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.BufferedOutputStream;
 import java.io.OutputStream;
 import java.util.Hashtable;
 
@@ -51,7 +52,7 @@ public class SftpUploadSession {
         Channel channel = session.openChannel( "sftp" );
         channel.connect();
         sftpChannel = (ChannelSftp) channel;
-        outputStream = sftpChannel.put(file, ChannelSftp.OVERWRITE);
+        outputStream = new BufferedOutputStream(sftpChannel.put(file, ChannelSftp.OVERWRITE));
         return this;
     }
 
