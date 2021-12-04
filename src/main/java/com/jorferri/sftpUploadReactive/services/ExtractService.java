@@ -16,7 +16,7 @@ public class ExtractService {
     public Flux<String> runExtract() {
         return repository.runExtract().map(Object::toString)
                 .startWith("HEADER")
-                .doOnNext(s -> log.info("Row->" + s))
+//                .doOnNext(s -> log.info("Row->" + s))
 //                .subscribeOn(Schedulers.newParallel("file-copy", 3))
 //                .publishOn(Schedulers.newParallel("file-copy", numTargets))
 //                .log()

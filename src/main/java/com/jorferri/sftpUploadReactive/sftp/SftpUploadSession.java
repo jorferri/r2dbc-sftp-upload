@@ -61,7 +61,7 @@ public class SftpUploadSession {
     public SftpUploadSession write(String s) {
         outputStream.write(s.getBytes());
         outputStream.write(lineSeparator.getBytes());
-        log.info("Write " + file + " via " + Thread.currentThread().getName());
+//        log.info("Write " + file + " via " + Thread.currentThread().getName());
         return this;
     }
 
