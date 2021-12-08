@@ -47,6 +47,10 @@ public class SftpUploadSession {
         Hashtable<String, String> config = new Hashtable<>();
         config.put("StrictHostKeyChecking", "no");
         JSch.setConfig(config);
+
+//        String privateKey = ".ssh/id_rsa";
+//        jsch.addIdentity(privateKey); //remove password
+
         session = jsch.getSession( username, host, port);
         session.setPassword(password);
         session.connect();
