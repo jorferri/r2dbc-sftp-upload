@@ -94,10 +94,17 @@ public class SftpUploadSession {
         return new String(hexChars, StandardCharsets.UTF_8);
     }
 
+    @SneakyThrows
     public void createMetadataAndClose() {
         byte[] digest = outputStream.getMessageDigest().digest();
         String md5 = bytesToHex(digest);
         log.info("Metadata for " + file + " uploaded:" + md5);
+        outputStream.close();
+
+        BufferedOutputStream metadata = new BufferedOutputStream(sftpChannel.put("/upload/metadata.txt", ChannelSftp.OVERWRITE));
+        metadata.write(md5.getBytes());
+        metadata.close();
+
         close();
     }
 }
