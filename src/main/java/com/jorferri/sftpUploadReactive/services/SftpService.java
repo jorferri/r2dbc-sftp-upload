@@ -23,14 +23,14 @@ public class SftpService {
                                                 .map(upload::write)
                                                 .subscribe(s -> {},
                                                         (e) -> upload.close(),  // close file if error / oncomplete
-                                                        upload::close))
+                                                        upload::createMetadataAndClose))
                                         .retryWhen(Retry.backoff(3, Duration.ofSeconds(10)).jitter(0.75))
                                         .doOnError(throwable -> log.error("File couldn't be uploaded:" + sftpUploadSession.getFile(), throwable))
                                         .subscribeOn(Schedulers.boundedElastic()) //to avoid blocking
                                         .subscribe()
 
                 )
-//                .log()
+                .log()
                 .subscribe();
     }
 }
