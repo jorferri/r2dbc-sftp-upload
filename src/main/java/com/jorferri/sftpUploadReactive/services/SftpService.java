@@ -24,7 +24,7 @@ public class SftpService {
                                                 .map(upload::write)
                                                 .doOnComplete(upload::createMetadataAndClose)
                                                 .doOnError((e) -> upload.close())
-                                                        .reduce((sftpUploadSession1, sftpUploadSession2) -> sftpUploadSession)
+                                                .reduce((sftpUploadSession1, sftpUploadSession2) -> sftpUploadSession2) // we want to return one session per file
 //                                                .subscribe(s -> {},
 //                                                        (e) -> upload.close(),  // close file if error / oncomplete
 //                                                        upload::createMetadataAndClose)
