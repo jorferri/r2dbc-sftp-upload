@@ -33,7 +33,7 @@ public class ExtractRestController {
     @GetMapping("/extract/{name}/{day}")
     @ApiOperation(value = "Generate extract")
     @ResponseBody
-    public ResponseEntity<String> getExtract (
+    public Flux<String> getExtract (
             @ApiParam(value = "name", example = "extractName")
             @PathVariable(value = "name") String name,
             @ApiParam(value = "day", example = "2021-12-01")
@@ -68,8 +68,8 @@ public class ExtractRestController {
                 )
         );
 
-        sftpService.uploadExtract(targetSftps, stringFlux);
+        return sftpService.uploadExtract(targetSftps, stringFlux).map(sftpUploadSession -> "Extract uploaded for file " + sftpUploadSession.getFile() + "\n");
 
-        return new ResponseEntity<>("extract triggered", HttpStatus.OK);
+//        return new ResponseEntity<>("extract triggered", HttpStatus.OK);
     }
 }

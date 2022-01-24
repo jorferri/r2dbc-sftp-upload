@@ -14,23 +14,29 @@ import java.time.Duration;
 @Slf4j
 public class SftpService {
 
-    public void uploadExtract(Flux<SftpUploadSession> targetSftps, Flux<String> stringFlux) {
-        targetSftps.map(
+    public Flux<SftpUploadSession> uploadExtract(Flux<SftpUploadSession> targetSftps, Flux<String> stringFlux) {
+        return
+                targetSftps.flatMap(
                         sftpUploadSession ->
                                 Mono.just(sftpUploadSession)
                                         .map(SftpUploadSession::init)
-                                        .map(upload -> stringFlux
+                                        .flatMapMany(upload -> stringFlux
                                                 .map(upload::write)
-                                                .subscribe(s -> {},
-                                                        (e) -> upload.close(),  // close file if error / oncomplete
-                                                        upload::createMetadataAndClose))
+                                                .doOnComplete(upload::createMetadataAndClose)
+                                                .doOnError((e) -> upload.close())
+                                                        .reduce((sftpUploadSession1, sftpUploadSession2) -> sftpUploadSession)
+//                                                .subscribe(s -> {},
+//                                                        (e) -> upload.close(),  // close file if error / oncomplete
+//                                                        upload::createMetadataAndClose)
+                                        )
                                         .retryWhen(Retry.backoff(3, Duration.ofSeconds(10)).jitter(0.75))
                                         .doOnError(throwable -> log.error("File couldn't be uploaded:" + sftpUploadSession.getFile(), throwable))
                                         .subscribeOn(Schedulers.boundedElastic()) //to avoid blocking
-                                        .subscribe()
+//                                        .subscribe()
 
                 )
-                .log()
-                .subscribe();
+//                .log()
+//                .subscribe()
+                ;
     }
 }
